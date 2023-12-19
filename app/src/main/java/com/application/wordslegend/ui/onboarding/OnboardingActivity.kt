@@ -16,6 +16,7 @@ import com.application.wordslegend.ui.theme.WordsLegendTheme
 import com.application.wordslegend.ui.viewmodel.OnboardingViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class OnboardingActivity : BaseActivity() {
 
     private val viewModel: OnboardingViewModel by viewModels()
@@ -28,7 +29,7 @@ class OnboardingActivity : BaseActivity() {
                 viewModel.loading.value
             }
         }
-
+        setTransparentStatusBar()
         setContent {
             WordsLegendTheme {
                 // A surface container using the 'background' color from the theme

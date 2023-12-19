@@ -4,6 +4,7 @@ import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,12 +33,12 @@ import com.application.wordslegend.ui.onboarding.component.LoginComponent
 import com.application.wordslegend.ui.theme.WordsLegendTheme
 
 @Composable
-fun SignupWithPasswordScreen(modifier: Modifier = Modifier) {
+fun SignupWithPasswordScreen(modifier: Modifier = Modifier, paddingValues: PaddingValues = PaddingValues(), onSignupClick: () -> Unit = {  }) {
     Box(modifier = modifier.fillMaxSize()) {
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = paddingValues.calculateTopPadding())
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)) {
 
@@ -116,7 +117,7 @@ fun SignupWithPasswordScreen(modifier: Modifier = Modifier) {
             Divider(modifier = modifier.fillMaxWidth())
 
             Button(
-                onClick = {   },
+                onClick = onSignupClick,
                 modifier = modifier
                     .fillMaxWidth()
                     .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)

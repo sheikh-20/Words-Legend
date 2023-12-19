@@ -3,4 +3,5 @@
     <string name="title_activity_onboarding">OnboardingActivity</string>
     <string name="continue_with_google">Continue With Google</string>
     <string name="continue_with_facebook">Continue With Facebook</string>
+    <string name="web_client_id">676564423941-4q74g1mm5lbjhdq1okagcedkr9jg0af5.apps.googleusercontent.com</string>
 </resources>

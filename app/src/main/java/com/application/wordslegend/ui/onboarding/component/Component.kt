@@ -10,18 +10,30 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Email
+import androidx.compose.material.icons.rounded.Lock
+import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedIconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -67,4 +79,50 @@ fun SocialLoginComponent(modifier: Modifier = Modifier, @DrawableRes icon: Int, 
             tint = Color.Unspecified
         )
     }
+}
+
+@Composable
+fun EmailComponent(modifier: Modifier = Modifier, email: String = "", onEmailUpdate: (String) -> Unit = {}, focusManager: FocusManager) {
+    OutlinedTextField(
+        value = email,
+        onValueChange = onEmailUpdate,
+        label = { Text(text = "Email") },
+        leadingIcon = {
+            Icon(imageVector = Icons.Rounded.Email, contentDescription = null)
+        },
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(30),
+        keyboardOptions = KeyboardOptions.Default.copy(
+            imeAction = ImeAction.Next,
+            keyboardType = KeyboardType.Email
+        ),
+        keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
+        colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = MaterialTheme.colorScheme.primary, unfocusedBorderColor = Color.LightGray)
+    )
+}
+
+@Composable
+fun PasswordComponent(modifier: Modifier = Modifier, password: String = "", onPasswordUpdate: (String) -> Unit = {}, focusManager: FocusManager) {
+    OutlinedTextField(
+        value = password,
+        onValueChange = onPasswordUpdate,
+        label = { Text(text = "Password") },
+        leadingIcon = {
+            Icon(imageVector = Icons.Rounded.Lock, contentDescription = null)
+        },
+        modifier = modifier.fillMaxWidth(),
+        trailingIcon = {
+            Icon(
+                modifier = modifier.size(24.dp),
+                imageVector = Icons.Rounded.VisibilityOff,
+                contentDescription = null)
+        },
+        shape = RoundedCornerShape(30),
+        keyboardOptions = KeyboardOptions.Default.copy(
+            imeAction = ImeAction.Done,
+            keyboardType = KeyboardType.Password
+        ),
+        keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
+        colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = MaterialTheme.colorScheme.primary, unfocusedBorderColor = Color.LightGray)
+    )
 }
