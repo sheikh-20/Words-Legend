@@ -56,6 +56,8 @@ android {
 
 dependencies {
 
+    implementation("com.google.firebase:firebase-database:20.3.0")
+    implementation("com.google.firebase:firebase-storage:20.3.0")
     val lifecycle_version = "2.6.2"
     val timber_version = "5.0.1"
     val lottie_version = "6.1.0"
@@ -147,5 +149,9 @@ dependencies {
 
     implementation("com.facebook.android:facebook-android-sdk:12.1.0")
     implementation ("com.facebook.android:facebook-login:14.1.0")
+
+
+    // Coil
+    implementation("io.coil-kt:coil-compose:2.4.0")
 
 }

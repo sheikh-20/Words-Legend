@@ -1,6 +1,10 @@
 package com.application.wordslegend.ui.onboarding.signup
 
+import android.app.Activity
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,29 +15,117 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.application.wordslegend.R
+import com.application.wordslegend.data.common.Resource
+import com.application.wordslegend.domain.usecase.SignInGoogleInteractor
+import com.application.wordslegend.ui.home.HomeActivity
 import com.application.wordslegend.ui.onboarding.component.LoginComponent
+import com.application.wordslegend.ui.onboarding.component.SocialLoginComponent
 import com.application.wordslegend.ui.theme.WordsLegendTheme
+import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @Composable
-fun SignupWithPasswordScreen(modifier: Modifier = Modifier, paddingValues: PaddingValues = PaddingValues(), onSignupClick: () -> Unit = {  }) {
+fun SignupWithPasswordScreen(modifier: Modifier = Modifier,
+                             paddingValues: PaddingValues = PaddingValues(),
+                             onSignUpClick: (String?, String?) -> Unit = { _, _ ->},
+                             onSocialSignIn: SharedFlow<Resource<AuthResult>>? = null,
+                             onAccountCreate: () -> Unit = {  },
+                             email: String = "",
+                             onEmailChange: (String) -> Unit = { _ -> },
+                             password: String = "",
+                             onPasswordChange: (String) -> Unit = { _ -> }) {
+
+    val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
+
+    var isLoading by remember {
+        mutableStateOf(false)
+    }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartIntentSenderForResult(),
+        onResult = { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                Timber.tag("LoginScreen").d("OK -> ${result.data.toString()}")
+
+//                onGoogleSignInClick(context as Activity, result.data)
+            } else {
+                Timber.tag("LoginScreen").e("ERROR")
+            }
+        }
+    )
+
+    LaunchedEffect(key1 = Unit) {
+        onSocialSignIn?.collectLatest {
+            when(it) {
+                is Resource.Loading -> {
+                    isLoading = true
+                }
+                is Resource.Failure -> {
+                    isLoading = false
+                    if (it.throwable is FirebaseAuthInvalidUserException) {
+//                        snackbarHostState.showSnackbar(message = "Email does not exists, Try signup!")
+                    } else {
+//                        snackbarHostState.showSnackbar(message = "Failure!")
+                        Timber.tag("Login").e(it.throwable)
+                    }
+                }
+                is Resource.Success -> {
+                    isLoading = false
+                    Timber.tag("Login").d("Google Success")
+
+                    onAccountCreate()
+
+//                    if (it.data.additionalUserInfo?.isNewUser == true) {
+//                        (context as Activity).finish()
+//                        AccountSetupActivity.startActivity(context as Activity)
+//                    } else {
+                    (context as Activity).finish()
+                    HomeActivity.startActivity((context as Activity))
+//                    }
+                }
+            }
+        }
+    }
+
+
     Box(modifier = modifier.fillMaxSize()) {
         Column(
             modifier = modifier
@@ -54,36 +146,39 @@ fun SignupWithPasswordScreen(modifier: Modifier = Modifier, paddingValues: Paddi
                 modifier = modifier.fillMaxWidth())
 
             Column {
-                Text(text = "Username")
+//                Text(text = "Email")
 
                 OutlinedTextField(
-                    value = "",
-                    onValueChange = {},
+                    value = email,
+                    onValueChange = onEmailChange,
                     modifier = modifier.fillMaxWidth(),
-                    label = { Text(text = "Username") }
-                )
-            }
-
-            Column {
-                Text(text = "Email")
-
-                OutlinedTextField(
-                    value = "",
-                    onValueChange = {},
-                    modifier = modifier.fillMaxWidth(),
-                    label = { Text(text = "Email") }
+                    label = { Text(text = "Email") },
+                    shape = RoundedCornerShape(30),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Next,
+                        keyboardType = KeyboardType.Text
+                    ),
+                    keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = MaterialTheme.colorScheme.primary, unfocusedBorderColor = Color.LightGray)
                 )
             }
 
 
             Column {
-                Text(text = "Password")
+//                Text(text = "Password")
 
                 OutlinedTextField(
-                    value = "",
-                    onValueChange = {},
+                    value = password,
+                    onValueChange = onPasswordChange,
                     modifier = modifier.fillMaxWidth(),
-                    label = { Text(text = "Password") }
+                    label = { Text(text = "Password") },
+                    shape = RoundedCornerShape(30),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Done,
+                        keyboardType = KeyboardType.Password
+                    ),
+                    keyboardActions = KeyboardActions(onNext = { focusManager.clearFocus() }),
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = MaterialTheme.colorScheme.primary, unfocusedBorderColor = Color.LightGray)
                 )
             }
 
@@ -99,13 +194,19 @@ fun SignupWithPasswordScreen(modifier: Modifier = Modifier, paddingValues: Paddi
                 Divider(modifier = modifier.weight(1f), color = Color.LightGray)
             }
 
-            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                LoginComponent(icon = R.drawable.ic_google, text = R.string.continue_with_google) {
+            Row(modifier = modifier
+                .fillMaxWidth()
+                .wrapContentWidth(align = Alignment.CenterHorizontally),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp)) {
 
-                }
-                LoginComponent(icon = R.drawable.ic_facebook, text = R.string.continue_with_facebook) {
+                SocialLoginComponent(
+                    icon = R.drawable.ic_facebook,
+                    onClick = {   })
 
-                }
+                SocialLoginComponent(
+                    icon = R.drawable.ic_google,
+                    onClick = {   })
             }
         }
 
@@ -117,7 +218,7 @@ fun SignupWithPasswordScreen(modifier: Modifier = Modifier, paddingValues: Paddi
             Divider(modifier = modifier.fillMaxWidth())
 
             Button(
-                onClick = onSignupClick,
+                onClick = { onSignUpClick(email, password) },
                 modifier = modifier
                     .fillMaxWidth()
                     .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
