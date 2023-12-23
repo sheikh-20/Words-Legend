@@ -2,7 +2,7 @@
 <resources>
     <style name="Theme.WordsLegend.Splash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_crossword</item>
-        <item name="windowSplashScreenBackground">@android:color/black</item>
+        <item name="windowSplashScreenBackground">#FF1C1B1F</item>
         <item name="postSplashScreenTheme">@style/Theme.WordsLegend</item>
     </style>
 </resources>

@@ -47,6 +47,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -97,8 +98,8 @@ fun SignupWithPersonalDetailsScreen(modifier: Modifier = Modifier,
         ) {
 
             Text(
-                text = "Create an account",
-                style = MaterialTheme.typography.displaySmall,
+                text = "Create an account ✏\uFE0F",
+                style = MaterialTheme.typography.headlineLarge,
                 modifier = modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.SemiBold
@@ -149,7 +150,8 @@ fun SignupWithPersonalDetailsScreen(modifier: Modifier = Modifier,
                         IconButton(onClick = { showDatePicker = true }) {
                             Icon(
                                 imageVector = Icons.Rounded.CalendarMonth,
-                                contentDescription = null
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary
                             )
                         }
                     },
@@ -241,6 +243,10 @@ fun SignupWithPersonalDetailsScreen(modifier: Modifier = Modifier,
                     .fillMaxWidth()
                     .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
                     .requiredHeight(50.dp)
+                    .shadow(
+                        elevation = 4.dp,
+                        shape = RoundedCornerShape(50)
+                    )
             ) {
 
                 Text(text = "Continue")

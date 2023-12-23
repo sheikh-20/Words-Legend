@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
@@ -33,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -95,14 +97,18 @@ fun OnboardingScreen(modifier: Modifier = Modifier,
 
             Divider(modifier = modifier.fillMaxWidth())
 
-            OutlinedButton(onClick = onSignupClick, modifier = modifier
+            Button(onClick = onSignupClick, modifier = modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
-                .requiredHeight(50.dp)) {
+                .requiredHeight(50.dp)
+                .shadow(
+                    elevation = 4.dp,
+                    shape = RoundedCornerShape(50)
+                )) {
                 Text(text = "GET STARTED")
             }
 
-            Button(
+            OutlinedButton(
                 onClick = onLoginClick,
                 modifier = modifier
                     .fillMaxWidth()

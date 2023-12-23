@@ -133,7 +133,8 @@ fun OnboardingApp(modifier: Modifier = Modifier,
                     email = onboardingViewModel.email,
                     onEmailChange = onboardingViewModel::onEmailChange,
                     password = onboardingViewModel.password,
-                    onPasswordChange = onboardingViewModel::onPasswordChange
+                    onPasswordChange = onboardingViewModel::onPasswordChange,
+                    onGoogleSignInClick = { activity, intent ->  onboardingViewModel.signInGoogle(activity, intent) },
                 )
             }
 
@@ -229,7 +230,7 @@ fun OnboardingAppBar(currentScreen: String, canNavigateBack: Boolean, onNavigate
                 IconButton(onClick = onNavigateUp) {
                     Icon(imageVector = Icons.Outlined.ArrowBack,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSecondary)
+                        tint = MaterialTheme.colorScheme.onBackground)
                 }
             }
         },

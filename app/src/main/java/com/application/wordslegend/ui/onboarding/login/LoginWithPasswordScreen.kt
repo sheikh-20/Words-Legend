@@ -136,14 +136,14 @@ fun LoginWithPasswordScreen(modifier: Modifier = Modifier,
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)) {
 
-            Text(text = "Hello there",
-                style = MaterialTheme.typography.displaySmall,
+            Text(text = "Hello there \uD83D\uDC4B",
+                style = MaterialTheme.typography.headlineLarge,
                 modifier = modifier.fillMaxWidth(),
                 textAlign = TextAlign.Start,
                 fontWeight = FontWeight.SemiBold)
 
             Column {
-                Text(text = "Email")
+//                Text(text = "Email")
 
                 EmailComponent(
                     email = email,
@@ -152,7 +152,7 @@ fun LoginWithPasswordScreen(modifier: Modifier = Modifier,
             }
 
             Column {
-                Text(text = "Password")
+//                Text(text = "Password")
 
 
                 PasswordComponent(
@@ -172,7 +172,7 @@ fun LoginWithPasswordScreen(modifier: Modifier = Modifier,
             TextButton(onClick = onForgotPasswordClick, modifier = modifier
                 .fillMaxWidth()
                 .wrapContentWidth(align = Alignment.CenterHorizontally)) {
-                Text(text = "Forgot password?")
+                Text(text = "Forgot password?", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
             }
 
             Row(verticalAlignment = Alignment.CenterVertically,
@@ -214,7 +214,11 @@ fun LoginWithPasswordScreen(modifier: Modifier = Modifier,
                 modifier =  modifier
                     .fillMaxWidth()
                     .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                    .requiredHeight(50.dp)) {
+                    .requiredHeight(50.dp)
+                    .shadow(
+                        elevation = 4.dp,
+                        shape = RoundedCornerShape(50)
+                    )) {
 
                 if (isLoading) {
                     CircularProgressIndicator(modifier = modifier.size(30.dp), strokeWidth = 2.dp, trackColor = Color.White)

@@ -32,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
@@ -58,8 +59,8 @@ fun OtpCodeScreen(modifier: Modifier = Modifier, onConfirmClick: () -> Unit = { 
             verticalArrangement = Arrangement.spacedBy(16.dp)) {
 
             Text(
-                text = "You've got email",
-                style = MaterialTheme.typography.displaySmall,
+                text = "You've got email \uD83D\uDCE9",
+                style = MaterialTheme.typography.headlineLarge,
                 modifier = modifier.fillMaxWidth(),
                 textAlign = TextAlign.Start,
                 fontWeight = FontWeight.SemiBold
@@ -150,7 +151,11 @@ fun OtpCodeScreen(modifier: Modifier = Modifier, onConfirmClick: () -> Unit = { 
                 modifier = modifier
                     .fillMaxWidth()
                     .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                    .requiredHeight(50.dp)) {
+                    .requiredHeight(50.dp)
+                    .shadow(
+                        elevation = 4.dp,
+                        shape = RoundedCornerShape(50)
+                    )) {
 
                 Text(text = "Confirm")
             }

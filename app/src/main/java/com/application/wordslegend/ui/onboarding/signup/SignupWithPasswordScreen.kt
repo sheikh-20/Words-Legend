@@ -1,6 +1,7 @@
 package com.application.wordslegend.ui.onboarding.signup
 
 import android.app.Activity
+import android.content.Intent
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
@@ -33,9 +34,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -51,7 +54,9 @@ import com.application.wordslegend.R
 import com.application.wordslegend.data.common.Resource
 import com.application.wordslegend.domain.usecase.SignInGoogleInteractor
 import com.application.wordslegend.ui.home.HomeActivity
+import com.application.wordslegend.ui.onboarding.component.EmailComponent
 import com.application.wordslegend.ui.onboarding.component.LoginComponent
+import com.application.wordslegend.ui.onboarding.component.PasswordComponent
 import com.application.wordslegend.ui.onboarding.component.SocialLoginComponent
 import com.application.wordslegend.ui.theme.WordsLegendTheme
 import com.google.firebase.auth.AuthResult
@@ -65,6 +70,7 @@ import timber.log.Timber
 fun SignupWithPasswordScreen(modifier: Modifier = Modifier,
                              paddingValues: PaddingValues = PaddingValues(),
                              onSignUpClick: (String?, String?) -> Unit = { _, _ ->},
+                             onGoogleSignInClick: (Activity?, Intent?) -> Unit = { _, _ ->},
                              onSocialSignIn: SharedFlow<Resource<AuthResult>>? = null,
                              onAccountCreate: () -> Unit = {  },
                              email: String = "",
@@ -74,6 +80,7 @@ fun SignupWithPasswordScreen(modifier: Modifier = Modifier,
 
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
+    val coroutineScope = rememberCoroutineScope()
 
     var isLoading by remember {
         mutableStateOf(false)
@@ -130,12 +137,17 @@ fun SignupWithPasswordScreen(modifier: Modifier = Modifier,
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = paddingValues.calculateTopPadding())
+                .padding(
+                    top = 16.dp,
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = paddingValues.calculateTopPadding()
+                )
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)) {
 
-            Text(text = "Create an account",
-                style = MaterialTheme.typography.displaySmall,
+            Text(text = "Create an account ✏\uFE0F",
+                style = MaterialTheme.typography.headlineLarge,
                 modifier = modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.SemiBold)
@@ -148,38 +160,14 @@ fun SignupWithPasswordScreen(modifier: Modifier = Modifier,
             Column {
 //                Text(text = "Email")
 
-                OutlinedTextField(
-                    value = email,
-                    onValueChange = onEmailChange,
-                    modifier = modifier.fillMaxWidth(),
-                    label = { Text(text = "Email") },
-                    shape = RoundedCornerShape(30),
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = ImeAction.Next,
-                        keyboardType = KeyboardType.Text
-                    ),
-                    keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
-                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = MaterialTheme.colorScheme.primary, unfocusedBorderColor = Color.LightGray)
-                )
+                EmailComponent(focusManager = focusManager, email = email, onEmailUpdate = onEmailChange)
             }
 
 
             Column {
 //                Text(text = "Password")
 
-                OutlinedTextField(
-                    value = password,
-                    onValueChange = onPasswordChange,
-                    modifier = modifier.fillMaxWidth(),
-                    label = { Text(text = "Password") },
-                    shape = RoundedCornerShape(30),
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = ImeAction.Done,
-                        keyboardType = KeyboardType.Password
-                    ),
-                    keyboardActions = KeyboardActions(onNext = { focusManager.clearFocus() }),
-                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = MaterialTheme.colorScheme.primary, unfocusedBorderColor = Color.LightGray)
-                )
+                PasswordComponent(focusManager = focusManager, password = password, onPasswordUpdate = onPasswordChange)
             }
 
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -206,7 +194,12 @@ fun SignupWithPasswordScreen(modifier: Modifier = Modifier,
 
                 SocialLoginComponent(
                     icon = R.drawable.ic_google,
-                    onClick = {   })
+                    onClick = {
+                        coroutineScope.launch {
+                            val result = SignInGoogleInteractor.signIn(context)
+                            launcher.launch(IntentSenderRequest.Builder(result ?: return@launch).build())
+                        }
+                    })
             }
         }
 
@@ -222,7 +215,11 @@ fun SignupWithPasswordScreen(modifier: Modifier = Modifier,
                 modifier = modifier
                     .fillMaxWidth()
                     .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                    .requiredHeight(50.dp)) {
+                    .requiredHeight(50.dp)
+                    .shadow(
+                        elevation = 4.dp,
+                        shape = RoundedCornerShape(50)
+                    )) {
 
                 Text(text = "Sign up")
             }
